@@ -40,6 +40,7 @@ def main():
 
         if command != last_cmd:
             send_command(command)
+            last_cmd = command
 
         time.sleep(0.02)
 
