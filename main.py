@@ -7,6 +7,8 @@ FLAG_PIN = 2
 SSID = "IoT"
 PASSWORD = "launchRob0t$"
 LED = Pin("LED", Pin.OUT)
+LEFT_LIGHT = Pin(2, Pin.OUT)
+RIGHT_LIGHT = Pin(3, Pin.OUT)
 current_state = [0, 0]
 wlan = None
 ip = None
@@ -76,6 +78,16 @@ def main() -> None:
             print("Request error:", e)
         finally:
             cl.close()
+        if current_state[0] == 1:
+            LEFT_LIGHT.value(1)
+        elif current_state[0] == 0:
+            LEFT_LIGHT.value(0)
+        
+        if current_state[1] == 1:
+            RIGHT_LIGHT.value(1)
+        elif current_state[1] == 0:
+            RIGHT_LIGHT.value(0)
+            
 
             
 main()
