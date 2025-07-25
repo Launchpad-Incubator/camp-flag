@@ -67,7 +67,7 @@ def main() -> None:
         cl, addr = sock.accept()
         try:
             request = cl.recv(1024).decode()
-            print("Request received:")
+            print(f"Request received: {request}")
             print(request)
             if 'GET /api?' in request:
                 handle_api_request()
