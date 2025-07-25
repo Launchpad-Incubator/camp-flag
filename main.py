@@ -1,5 +1,3 @@
-from typing import Self
-from urllib import request
 import network
 import socket
 import time
@@ -69,6 +67,7 @@ def handle_api_request():
         print("Parsing Error:", e)
 
 def main() -> None:
+    connect_wifi("Iot", "launchRob0t$")
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     sock = socket.socket()
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -92,3 +91,4 @@ def main() -> None:
             cl.close()
 
             
+main()
