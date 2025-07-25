@@ -1,9 +1,9 @@
 """
-FLAG CODE FOR CAMP LAUNCHPAD V0
+FLAG CODE FOR CAMP LAUNCHPAD
 
-- Connects to Raspberry Pi Pico W to control a servo motor.
+- Connects to Raspberry Pi Pico W to control flashing lights.
 
-Update notes: Init commit
+Update notes: Pivoted to lights
 
 Author: Aidan McMillan
 """
@@ -15,7 +15,7 @@ import time
 
 
 # INSERT IP INFO HERE
-PICO_IP = "10.10.20.82"
+PICO_IP = "10.10.20.86"
 
 def send_command(command: str) -> None:
     url = f"http://{PICO_IP}/api?{command}"
@@ -31,12 +31,13 @@ def main():
 
     while True:
         if keyboard.is_pressed('space'):
-            move_cmd = "move"
+            flag_cmd = "all"
+        elif keyboard.is_pressed('c'):
+            flag_cmd = "right"
+        elif keyboard.is_pressed('m'):
+            flag_cmd = "left"
 
-        else:
-            move_cmd = "hold"
-
-        command = f"cmd={move_cmd}"
+        command = f"cmd={flag_cmd}"
 
         if command != last_cmd:
             send_command(command)
@@ -45,4 +46,3 @@ def main():
         time.sleep(0.02)
 
 main()
-        
