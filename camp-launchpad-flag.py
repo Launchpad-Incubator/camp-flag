@@ -15,7 +15,7 @@ import time
 
 
 # INSERT IP INFO HERE
-PICO_IP = "10.10.20.86"
+PICO_IP = "10.10.20.63"
 
 def send_command(command: str) -> None:
     url = f"http://{PICO_IP}/api?{command}"
@@ -26,16 +26,16 @@ def send_command(command: str) -> None:
         print(f"Failed to send: {command} - Error: {e}")
     
 def main():
-    print("Initialized flag control. Press SPACE to move flag.")
+    print("Initialized flag control. Press c to change left light, m to change right, .")
     last_cmd = None
-
+    flag_cmd = None
     while True:
         if keyboard.is_pressed('space'):
             flag_cmd = "all"
         elif keyboard.is_pressed('c'):
-            flag_cmd = "right"
-        elif keyboard.is_pressed('m'):
             flag_cmd = "left"
+        elif keyboard.is_pressed('m'):
+            flag_cmd = "right"
 
         command = f"cmd={flag_cmd}"
 

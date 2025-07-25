@@ -1,19 +1,19 @@
 import network
 import socket
 import time
-from machine import Pin, PWM
+from machine import Pin
 
 FLAG_PIN = 2
 SSID = "IoT"
 PASSWORD = "launchRob0t$"
-UP_PULSE = 1200
-DOWN_PULSE = 1500
 LED = Pin("LED", Pin.OUT)
-current_state = False
+current_state = [0, 0]
 wlan = None
 ip = None
+request = None
 
-def connect_wifi(ssid: str, password: str):
+def connect_wifi():
+    global ip, wlan
     """Connects to a Wi-Fi network.
     
     Args:
@@ -25,7 +25,7 @@ def connect_wifi(ssid: str, password: str):
     """
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    wlan.connect(ssid, password)
+    wlan.connect(SSID, PASSWORD)
 
     print("Connecting to Wi-Fi...")
     while not wlan.isconnected():
@@ -37,37 +37,24 @@ def connect_wifi(ssid: str, password: str):
     print(f"Connected. IP address: {ip}")
     return ip, wlan
 
-
-def set_pulse(microseconds: int) -> None:
-    """Sets a PWM duty cycle based on a pulse width.
-        
-    Args:
-        microseconds: Duration of the high pulse in microseconds (1000-2000 typical).
-    """
-    duty = int(microseconds / 20000 * 65535)
-    Self.pwm.duty_u16(duty)
-def wifi_connect():
-    while not wlan.isconnected():
-        LED.toggle()
-        time.sleep(0.25)
-
-    LED.on()
-    ip = wlan.ifconfig()[0]
-    print(f"Connected to {SSID} IP address: {ip}")
-    return ip, wlan
-
-
 def handle_api_request():
+    global current_state
+    global request
     try:
         print(f"Incoming request: {request}")
         query = request.split('GET /api?')[1]
-        if query == "move":
-            current_state = not current_state
+        if query == "all":
+            current_state = [1,1]
+        elif query == "right":
+            current_state[1] = not current_state[1]
+        elif query == "left":
+            current_state[0] = not current_state[0]
     except Exception as e:
         print("Parsing Error:", e)
 
 def main() -> None:
-    connect_wifi("Iot", "launchRob0t$")
+    global request
+    ip = connect_wifi()[0]
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     sock = socket.socket()
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -81,7 +68,7 @@ def main() -> None:
             print("Request received:")
             print(request)
             if 'GET /api?' in request:
-                handle_api_request(request)
+                handle_api_request()
                 cl.send("HTTP/1.1 204 No Content\r\n\r\n")
             else:
                 cl.send("HTTP/1.1 404 Not Found\r\n\r\n")
